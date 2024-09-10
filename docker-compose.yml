@@ -1,0 +1,84 @@
+services:
+  api:
+    build:
+      context: ./as_store_api
+      dockerfile: Dockerfile
+    container_name: as_store_api
+    environment:
+      NODE_ENV: development
+#      DB_HOST: as_postgres
+#      DB_PORT: 5432
+#      DB_USER: postgres
+#      DB_PASSWORD: postgres
+      DB_HOST: 18.139.65.179
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: Agro$$Soft$$2023
+      #MONGO_URI: mongodb://root:nopass@as_mongo/as_nosql_db?retryWrites=true&connectTimeoutMS=10000
+      MONGO_URI: mongodb://as_mongo:27017/as_store_mongo?authSource=admin
+      REDIS_HOST: as_redis
+      REDIS_PORT: 6379
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./as_store_api/app:/app/app
+      - ./as_store_api/config:/app/config
+
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+
+#  mysql:
+#    image: mysql:8.0.33
+#    container_name: as_mysql
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: nopass
+#      MYSQL_DATABASE: as_store
+#      MYSQL_USER: appuser
+#      MYSQL_PASSWORD: nopass
+#    volumes:
+#      - ./data/mysql:/var/lib/mysql
+#    ports:
+#      - '3306:3306'
+
+  postgres:
+    image: postgres:15.3
+    container_name: as_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=as_store
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+
+  mongodb:
+    image: mongo:latest
+    container_name: as_mongo
+    restart: always
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: root
+      MONGODB_INITDB_ROOT_PASSWORD: nopass
+      MONGO_INITDB_DATABASE: as_store_mongo
+
+    volumes:
+      - ./data/mongodb:/data/db
+    ports:
+      - '27017:27017'
+
+  redis:
+    image: redis:latest
+    container_name: as_redis
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - '6379:6379'
+
+

@@ -1,0 +1,6 @@
+{
+  "watch": ["app", "config", "redis.js", "server.js", "db.js"],
+  "ext": "js",
+  "ignore": [],
+  "exec": "node --trace-warnings server.js"
+}
